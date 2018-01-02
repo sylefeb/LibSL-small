@@ -130,7 +130,7 @@ NAMESPACE::TriangleMesh *NAMESPACE::MeshFormat_stl::loadASCII(const char *fname)
 		vd.pos[2] = parser.readFloat();
 		verts.push_back( vd );
 	  }
-	  int id0 = verts.size()-3;
+	  int id0 = (int)verts.size()-3;
 	  tris.push_back(V3U(id0,id0+1,id0+2));
 	  s = parser.readString();
 	  if (strcmp(s,"endloop")) {
@@ -143,7 +143,7 @@ NAMESPACE::TriangleMesh *NAMESPACE::MeshFormat_stl::loadASCII(const char *fname)
   }
   // allocate mesh
   TriangleMesh_generic<MeshFormat_stl::t_VertexData> *mesh
-    = new TriangleMesh_generic<MeshFormat_stl::t_VertexData>(verts.size(), tris.size(), 0, AutoPtr<MVF>(MVF::make<MeshFormat_stl::t_VertexFormat>()));
+    = new TriangleMesh_generic<MeshFormat_stl::t_VertexData>((uint)verts.size(), (uint)tris.size(), 0, AutoPtr<MVF>(MVF::make<MeshFormat_stl::t_VertexFormat>()));
   ForIndex(v,verts.size()) {
 	  mesh->vertexAt(v)   = verts[v];
   }
