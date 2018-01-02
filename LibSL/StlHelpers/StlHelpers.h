@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------
-Author: Sylvain Lefebvre    sylvain.lefebvre@inria.fr
+Author: Sylvain Lefebvre    sylvain.lefebvre@sophia.inria.fr
 
                   Simple Library for Graphics (LibSL)
 
@@ -8,16 +8,16 @@ tools to simplify programming real-time computer graphics applications
 under OpenGL and DirectX.
 
 This software is governed by the CeCILL-C license under French law and
-abiding by the rules of distribution of free software.  You can  use,
+abiding by the rules of distribution of free software.  You can  use, 
 modify and/ or redistribute the software under the terms of the CeCILL-C
 license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info".
+"http://www.cecill.info". 
 
 As a counterpart to the access to the source code and  rights to copy,
 modify and redistribute granted by the license, users are provided only
 with a limited warranty  and the software's author,  the holder of the
 economic rights,  and the successive licensors  have only  limited
-liability.
+liability. 
 
 In this respect, the user's attention is drawn to the risks associated
 with loading,  using,  modifying and/or developing or reproducing the
@@ -26,71 +26,52 @@ that may mean  that it is complicated to manipulate,  and  that  also
 therefore means  that it is reserved for developers  and  experienced
 professionals having in-depth computer knowledge. Users are therefore
 encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or
-data to be ensured and,  more generally, to use and operate it in the
-same conditions as regards security.
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
 
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL-C license and that you accept its terms.
 -------------------------------------------------------------------- */
 // ------------------------------------------------------
-// LibSL - main include file
+// LibSL::StlHelpers
 // ------------------------------------------------------
 //
-//
-//
+// STL syntax helpers
+// 
 // ------------------------------------------------------
-// Sylvain Lefebvre - 2006-03-09
+// Sylvain Lefebvre - 2006-02-23
 // ------------------------------------------------------
 
 #pragma once
-#define LIBSL_CORE_INCLUDED
 
-// #pragma message("Including LibSL.h")
+#include <LibSL/LibSL.common.h>
 
-#define LIBSL_RELEASE
+#include <string>
 
-#ifdef WIN32
-#include <windows.h>
-#endif
+namespace LibSL {
+	namespace StlHelpers {
 
-#include <LibSL/Errors/Errors.h>
-#include <LibSL/Memory/Pointer.h>
-#include <LibSL/System/System.h>
-#include <LibSL/CppHelpers/CppHelpers.h>
-#include <LibSL/StlHelpers/StlHelpers.h>
+    LIBSL_DLL std::string loadFileIntoString         (const char *);
+    LIBSL_DLL std::string extractFileName            (const std::string& path);
+    LIBSL_DLL std::string extractExtension           (const std::string& path);
+    LIBSL_DLL std::string extractPath                (const std::string& path);
+    LIBSL_DLL std::string removeExtensionFromFileName(const std::string& fname);
+    LIBSL_DLL std::string replaceBy                  (const std::string& match,const std::string& replacement,const std::string& str);
 
-#include <LibSL/Memory/Array.h>
-#include <LibSL/Memory/Array2D.h>
-#include <LibSL/Memory/Array3D.h>
+    /// fixes transform + tolower issue (defined both as a one arg and two arg function)
+    template<class charT> charT toLower(charT c) {
+	return tolower(c); // explicitely call one argument version of tolower
+    }
+  } //namespace LibSL::StlHelpers
+} //namespace LibSL
 
-#include <LibSL/Math/Math.h>
-#include <LibSL/Math/Tuple.h>
-#include <LibSL/Math/Vertex.h>
-#include <LibSL/Math/Matrix4x4.h>
+// ------------------------------------------------------
 
-#include <LibSL/Geometry/AAB.h>
-#include <LibSL/Mesh/Mesh.h>
+#define ForIterator(T,C,I)      for (T::iterator I=C.begin();I!=C.end();I++)
+#define ForConstIterator(T,C,I) for (T::const_iterator I=C.begin();I!=C.end();I++)
 
-#include <LibSL/Image/Image.h>
-#include <LibSL/Image/Filter.h>
-#include <LibSL/Image/ImagePyramid.h>
-#include <LibSL/Image/ImageFormat_TGA.h>
-
-// using namespace LibSL;
-using namespace LibSL;
-using namespace LibSL::Errors;
-using namespace LibSL::System;
-using namespace LibSL::System::File; 
-using namespace LibSL::System::Time;
-using namespace LibSL::Memory::Array;
-using namespace LibSL::Memory::Pointer;
-using namespace LibSL::Math; 
-using namespace LibSL::Geometry;
-using namespace LibSL::CppHelpers;
-using namespace LibSL::StlHelpers;
-using namespace LibSL::Mesh;
-using namespace LibSL::Image;
-using namespace LibSL::Filter;
+#define ForIterator_typename(T,C,I)      for (typename T::iterator I=C.begin();I!=C.end();I++)
+#define ForConstIterator_typename(T,C,I) for (typename T::const_iterator I=C.begin();I!=C.end();I++)
 
 // ------------------------------------------------------
