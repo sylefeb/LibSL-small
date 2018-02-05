@@ -43,6 +43,8 @@ knowledge of the CeCILL-C license and that you accept its terms.
 #include "VertexFormat.h"
 
 #include <sstream>
+#include <cstring>
+
 using namespace std;
 
 // -------------------------------------------------
