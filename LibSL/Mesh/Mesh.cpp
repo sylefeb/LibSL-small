@@ -61,6 +61,7 @@ using namespace LibSL::Math;
 #include <set>
 #include <map>
 #include <queue>
+#include <cstring>
 
 using namespace std;
 
