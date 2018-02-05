@@ -57,6 +57,7 @@ knowledge of the CeCILL-C license and that you accept its terms.
 #include <LibSL/Math/Vertex.h>
 #include <LibSL/Geometry/AAB.h>
 #include <LibSL/Mesh/VertexFormat.h>
+#include <loki/static_check.h>
 
 // ------------------------------------------------------
 
