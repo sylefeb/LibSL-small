@@ -63,6 +63,7 @@ knowledge of the CeCILL-C license and that you accept its terms.
 #include <LibSL/Memory/Array.h>
 #include <LibSL/Memory/Array2D.h>
 #include <LibSL/Memory/Array3D.h>
+#include <LibSL/Memory/ArrayTools.h>
 
 #include <LibSL/Math/Math.h>
 #include <LibSL/Math/Tuple.h>
