@@ -70,9 +70,11 @@ knowledge of the CeCILL-C license and that you accept its terms.
 #include <LibSL/Math/Tuple.h>
 #include <LibSL/Math/Vertex.h>
 #include <LibSL/Math/Matrix4x4.h>
+#include <LibSL/Math/Quaternion.h>
 
 #include <LibSL/Geometry/AAB.h>
 #include <LibSL/Mesh/Mesh.h>
+#include <LibSL/Mesh/MeshFormat_stl.h>
 
 #include <LibSL/Image/Image.h>
 #include <LibSL/Image/Filter.h>
@@ -94,5 +96,9 @@ using namespace LibSL::StlHelpers;
 using namespace LibSL::Mesh;
 using namespace LibSL::Image;
 using namespace LibSL::Filter;
+
+#define LIBSL_WIN32_FIX                \
+LibSL::Image::ImageFormat_TGA   s_TGA; \
+LibSL::Mesh::MeshFormat_stl     s_Stl;
 
 // ------------------------------------------------------
