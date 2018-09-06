@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------
-Author: Sylvain Lefebvre    sylvain.lefebvre@inria.fr
+Author: Sylvain Lefebvre    sylvain.lefebvre@sophia.inria.fr
 
                   Simple Library for Graphics (LibSL)
 
@@ -8,16 +8,16 @@ tools to simplify programming real-time computer graphics applications
 under OpenGL and DirectX.
 
 This software is governed by the CeCILL-C license under French law and
-abiding by the rules of distribution of free software.  You can  use,
+abiding by the rules of distribution of free software.  You can  use, 
 modify and/ or redistribute the software under the terms of the CeCILL-C
 license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info".
+"http://www.cecill.info". 
 
 As a counterpart to the access to the source code and  rights to copy,
 modify and redistribute granted by the license, users are provided only
 with a limited warranty  and the software's author,  the holder of the
 economic rights,  and the successive licensors  have only  limited
-liability.
+liability. 
 
 In this respect, the user's attention is drawn to the risks associated
 with loading,  using,  modifying and/or developing or reproducing the
@@ -26,73 +26,68 @@ that may mean  that it is complicated to manipulate,  and  that  also
 therefore means  that it is reserved for developers  and  experienced
 professionals having in-depth computer knowledge. Users are therefore
 encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or
-data to be ensured and,  more generally, to use and operate it in the
-same conditions as regards security.
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
 
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL-C license and that you accept its terms.
 -------------------------------------------------------------------- */
 // ------------------------------------------------------
-// LibSL - main include file
+// LibSL::SvgHelpers
 // ------------------------------------------------------
 //
-//
-//
+// SVG creation helpers
+// 
 // ------------------------------------------------------
-// Sylvain Lefebvre - 2006-03-09
+// Sylvain Lefebvre - 2015-07-07
 // ------------------------------------------------------
 
 #pragma once
-#define LIBSL_CORE_INCLUDED
 
-// #pragma message("Including LibSL.h")
-
-#define LIBSL_RELEASE
-
-#ifdef WIN32
-#include <windows.h>
-#endif
-
-#include <LibSL/Errors/Errors.h>
-#include <LibSL/Memory/Pointer.h>
-#include <LibSL/System/System.h>
-#include <LibSL/CppHelpers/CppHelpers.h>
-#include <LibSL/StlHelpers/StlHelpers.h>
-#include <LibSL/SvgHelpers/SvgHelpers.h>
-
-#include <LibSL/Memory/Array.h>
-#include <LibSL/Memory/Array2D.h>
-#include <LibSL/Memory/Array3D.h>
-#include <LibSL/Memory/ArrayTools.h>
-
-#include <LibSL/Math/Math.h>
-#include <LibSL/Math/Tuple.h>
-#include <LibSL/Math/Vertex.h>
-#include <LibSL/Math/Matrix4x4.h>
+#include <string>
+#include <fstream>
 
 #include <LibSL/Geometry/AAB.h>
-#include <LibSL/Mesh/Mesh.h>
+#include <LibSL/Math/Matrix4x4.h>
 
-#include <LibSL/Image/Image.h>
-#include <LibSL/Image/Filter.h>
-#include <LibSL/Image/ImagePyramid.h>
-#include <LibSL/Image/ImageFormat_TGA.h>
+namespace LibSL {
+  namespace SvgHelpers {
 
-// using namespace LibSL;
-using namespace LibSL;
-using namespace LibSL::Errors;
-using namespace LibSL::System;
-using namespace LibSL::System::File; 
-using namespace LibSL::System::Time;
-using namespace LibSL::Memory::Array;
-using namespace LibSL::Memory::Pointer;
-using namespace LibSL::Math; 
-using namespace LibSL::Geometry;
-using namespace LibSL::CppHelpers;
-using namespace LibSL::StlHelpers;
-using namespace LibSL::Mesh;
-using namespace LibSL::Image;
-using namespace LibSL::Filter;
+    class Svg
+    {
+    private:
+      std::ofstream m_File;
+      std::string   m_StrokeColor;
+      float         m_StrokeWidth;
+      std::string   m_FillColor;
+      LibSL::Math::m4x4f m_Trsf;
+    public:
+      Svg(const std::string &fname,         
+        LibSL::Geometry::AAB<2> viewbox = LibSL::Geometry::AAB<2>(),
+        LibSL::Math::m4x4f transform = LibSL::Math::m4x4f::identity());
+      ~Svg();
+
+			void setProperties(std::string strokeColor, std::string fillColor, float strokeWidth);
+
+      void startPath();
+      void endPath(bool open=false);
+      void addPoint(float,float);
+
+      void startPolygon();
+      void startPolygonPath();
+      void endPolygonPath();
+      void endPolygon();
+
+      void addCircle(float x, float y, float r);
+      void addText(float x, float y, const char *txt);
+
+      std::string& strokeColor() { return m_StrokeColor; }
+      float&       strokeWidth() { return m_StrokeWidth; }
+      std::string& fillColor()   { return m_FillColor; }
+    };
+
+  } //namespace LibSL::SvgHelpers
+} //namespace LibSL
 
 // ------------------------------------------------------
