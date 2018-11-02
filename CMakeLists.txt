@@ -56,8 +56,8 @@ SET(LIBSL_SMALL_CORE
 IF(NOT WIN32)
 SET(LIBSL_SMALL_CORE
   ${LIBSL_SMALL_CORE}
-#	src/LibSL/Image/ImageFormat_JPG.cpp
-#	src/LibSL/Image/ImageFormat_JPG.h
+	src/LibSL/Image/ImageFormat_JPG.cpp
+	src/LibSL/Image/ImageFormat_JPG.h
 	src/LibSL/Image/ImageFormat_PNG.cpp
 	src/LibSL/Image/ImageFormat_PNG.h
 )
