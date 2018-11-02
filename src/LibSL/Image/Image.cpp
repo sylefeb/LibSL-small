@@ -51,6 +51,7 @@ using namespace LibSL::CppHelpers;
 using namespace LibSL::Math;
 
 #include <algorithm>
+#include <cstring>
 
 //---------------------------------------------------------------------------
 
