@@ -59,6 +59,8 @@ knowledge of the CeCILL-C license and that you accept its terms.
 #include <LibSL/Mesh/VertexFormat.h>
 #include <loki/static_check.h>
 
+#include <cstring>
+
 // ------------------------------------------------------
 
 namespace LibSL {

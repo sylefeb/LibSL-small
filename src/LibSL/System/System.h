@@ -49,6 +49,7 @@ knowledge of the CeCILL-C license and that you accept its terms.
 
 #include <cstdio>
 #include <vector>
+#include <string>
 
 #include <LibSL/LibSL.common.h>
 

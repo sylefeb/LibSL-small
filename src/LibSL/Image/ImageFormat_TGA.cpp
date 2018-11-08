@@ -51,6 +51,7 @@ using namespace LibSL::Math;
 
 #include <iostream>
 #include <string>
+#include <cstring>
 using namespace std;
 
 #include "tga.h"
