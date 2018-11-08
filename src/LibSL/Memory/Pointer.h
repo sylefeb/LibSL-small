@@ -389,8 +389,8 @@ namespace LibSL  {
 
         void erase() { if (!Pointer::isNull()) { delete (Pointer::raw()); (*this) = NULL; } }
 
-        operator t_RawPointer()            { return (raw()); }
-        operator T_Type * const ()   const { return (raw()); }
+        operator typename Pointer::t_RawPointer() { return (raw()); }
+        operator T_Type * const () const          { return (raw()); }
       };
 
 #else // g++
