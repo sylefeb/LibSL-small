@@ -67,10 +67,6 @@ inline void sl_assert_func(bool b, const char *expr, const char *file, int line)
 {
   if (!b) {
     fprintf(stderr, "**ASSERT FAILED** %s, file %s, line %d\n", expr, file, line);
-    
-    std::cout << "Press enter to close ...";
-    std::cin.get();
-
     exit(-1);
   }
 }
