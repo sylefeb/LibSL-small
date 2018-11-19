@@ -50,7 +50,7 @@ knowledge of the CeCILL-C license and that you accept its terms.
 
 #define LIBSL_RELEASE
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN64)
 #include <windows.h>
 #endif
 
@@ -100,5 +100,7 @@ using namespace LibSL::Filter;
 #define LIBSL_WIN32_FIX                \
 LibSL::Image::ImageFormat_TGA   s_TGA; \
 LibSL::Mesh::MeshFormat_stl     s_Stl;
+
+#define LIBSL_STATIC_FIX LIBSL_WIN32_FIX
 
 // ------------------------------------------------------
