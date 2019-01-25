@@ -281,7 +281,7 @@ namespace LibSL  {
 
 // ----------------------------------------------------
 
-#define ForArray3D(T,I,J,K) for (int K=0;K<T.zsize();K++) for (int J=0;J<T.ysize();J++) for (int I=0;I<T.xsize();I++)
+#define ForArray3D(T,I,J,K) for (int K=0;K<(int)T.zsize();K++) for (int J=0;J<(int)T.ysize();J++) for (int I=0;I<(int)T.xsize();I++)
 #define A3D(x,y,z)          LibSL::Math::Triple(x,y,z)
 
 // ----------------------------------------------------
