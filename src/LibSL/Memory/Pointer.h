@@ -338,7 +338,7 @@ namespace LibSL  {
         */
       };
 
-#if defined(WIN32) || defined(_WIN64) // This is due to an incompatibility btw Visual C and g++ // TODO FIXME
+#if defined(_WIN32) || defined(_WIN64) // This is due to an incompatibility btw Visual C and g++ // TODO FIXME
 
       /*!
 

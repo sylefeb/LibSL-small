@@ -50,7 +50,7 @@ knowledge of the CeCILL-C license and that you accept its terms.
 
 #define LIBSL_RELEASE
 
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #endif
 

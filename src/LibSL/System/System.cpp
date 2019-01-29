@@ -50,7 +50,7 @@ using namespace LibSL::Errors;
 
 // ------------------------------------------------------
 
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
 # include <windows.h>
 # include <psapi.h>
 # include <shlwapi.h>
@@ -67,7 +67,7 @@ using namespace LibSL::Errors;
 
 void NAMESPACE::File::__fopen_s(FILE **pf,const char *path, const char *mode)
 {
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
   fopen_s(pf,path,mode);
 #else
   FILE *f = fopen(path,mode);
@@ -79,7 +79,7 @@ void NAMESPACE::File::__fopen_s(FILE **pf,const char *path, const char *mode)
 
 bool NAMESPACE::File::exists(const char *fname)
 {
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
   return (PathFileExistsA(fname) != 0);
 #else
   FILE *f = NULL;
@@ -111,7 +111,7 @@ long NAMESPACE::File::size(const char *path)
 void NAMESPACE::File::listFiles(const char *path,std::vector<std::string>& _files)
 {
   _files.clear();
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
   WIN32_FIND_DATAA current;
   std::string wpath = std::string(path) + "*";
   HANDLE find = FindFirstFileA(wpath.c_str(),&current);
@@ -151,7 +151,7 @@ void NAMESPACE::File::listFiles(const char *path,std::vector<std::string>& _file
 void NAMESPACE::File::listDirectories(const char *path,std::vector<std::string>& _dirs)
 {
   _dirs.clear();
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
   std::string wpath = std::string(path) + "*";
   WIN32_FIND_DATAA current;
   HANDLE find = FindFirstFileA(wpath.c_str(),&current);
@@ -187,7 +187,7 @@ void NAMESPACE::File::listDirectories(const char *path,std::vector<std::string>&
 void    NAMESPACE::File::createDirectory(const char *path)
 {
   sl_assert(path != NULL);
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
   CreateDirectoryA(path,NULL);
 #else
   mkdir(path,S_IRUSR|S_IWUSR|S_IXUSR);
@@ -202,7 +202,7 @@ const char *NAMESPACE::File::adaptPath      (const char *path)
   static char buffer[N];
   sl_assert(path != NULL);
   int c = 0;
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
   while (path[c] != '\0') {
     buffer[c] = path[c];
     if (buffer[c] == '/') { buffer[c] = '\\'; }
@@ -226,7 +226,7 @@ const char *NAMESPACE::File::adaptPath      (const char *path)
 
 NAMESPACE::File::t_FileTime NAMESPACE::File::timestamp(const char *path)
 {
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
   HANDLE f = CreateFileA(path,
     GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
     NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -268,7 +268,7 @@ bool operator<(const NAMESPACE::File::t_FileTime& a, const NAMESPACE::File::t_Fi
 
 void NAMESPACE::Process::sleep(uint msec)
 {
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
   Sleep(msec);
 #else
   usleep(msec * 1000);
@@ -282,7 +282,7 @@ void NAMESPACE::Process::sleep(uint msec)
 const char *NAMESPACE::Application::executablePath()
 {
   static char appPath[1024]=".";
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
   GetModuleFileNameExA(GetCurrentProcess(),NULL,appPath,1024);
   // remove file name
   char *pos = strrchr(appPath,'\\');
@@ -346,7 +346,7 @@ const char *NAMESPACE::Application::executablePath()
 
 NAMESPACE::Time::t_time NAMESPACE::Time::milliseconds()
 {
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
   static bool   init = false;
   static t_time freq;
   if (!init) { // TODO / FIXME move into a global timer init ?
@@ -384,7 +384,7 @@ NAMESPACE::Time::t_time NAMESPACE::Time::milliseconds()
 
 double NAMESPACE::Time::microseconds()
 {
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
   static bool          init = false;
   static LARGE_INTEGER freq;
   if (!init) { // TODO / FIXME move into a global timer init ?
@@ -423,7 +423,7 @@ double NAMESPACE::Time::microseconds()
 // ------------------------------------------------------
 // ------------------------------------------------------
 
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
 
 // icompatibility with x64
 /*
@@ -452,7 +452,7 @@ unsigned __int64 rdtsc(void)
 
 long long NAMESPACE::Time::ticks()
 {
-#if defined(WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
 
   return rdtsc();
 
