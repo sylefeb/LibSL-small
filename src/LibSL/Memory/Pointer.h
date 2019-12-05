@@ -84,8 +84,8 @@ namespace LibSL  {
       template <typename T_Type> class TransferAddress
       {
       public:
-        TransferAddress()         {}
-        TransferAddress(T_Type *) {}
+        TransferAddress()           {}
+        void initFrom(T_Type** ptr) {}
         void transferFrom(
           T_Type                       **dst,
           const TransferAddress<T_Type> *policy_src,
@@ -101,8 +101,8 @@ namespace LibSL  {
       template <typename T_Type> class TransferClone
       {
       public:
-        TransferClone()         {}
-        TransferClone(T_Type *) {}
+        TransferClone()             {}
+        void initFrom(T_Type** ptr) {}
         void transferFrom(
           T_Type                     **dst,
           const TransferClone<T_Type> *policy_src,
@@ -119,7 +119,6 @@ namespace LibSL  {
       {
       public:
 
-//        std::atomic<T_CounterType> *m_Counter;
         T_CounterType *m_Counter;
 
         TransferRefCount()
@@ -127,11 +126,10 @@ namespace LibSL  {
           m_Counter = NULL;
         }
 
-        TransferRefCount(T_Type *ptr)
+        void initFrom(T_Type** ptr)
         {
-          if (ptr != NULL) {
+          if (*ptr != NULL) {
             // allocate a new counter initialized to 1
-            // m_Counter = new std::atomic<T_CounterType>(1);
             m_Counter = new T_CounterType(1);
           } else {
             m_Counter = NULL;
@@ -217,7 +215,6 @@ namespace LibSL  {
       {
       public:
         TransferRefCountUInt()            : TransferRefCount<T_Type,uint,(1u<<31)>() {}
-        TransferRefCountUInt(T_Type *ptr) : TransferRefCount<T_Type,uint,(1u<<31)>(ptr) {}
       };
 
       template <typename T_Type>
@@ -225,7 +222,6 @@ namespace LibSL  {
       {
       public:
         TransferRefCountUShort()            : TransferRefCount<T_Type,ushort,65535>() {}
-        TransferRefCountUShort(T_Type *ptr) : TransferRefCount<T_Type,ushort,65535>(ptr) {}
       };
 
       template <typename T_Type>
@@ -233,7 +229,6 @@ namespace LibSL  {
       {
       public:
         TransferRefCountUChar()            : TransferRefCount<T_Type,uchar,255>() {}
-        TransferRefCountUChar(T_Type *ptr) : TransferRefCount<T_Type,uchar,255>(ptr) {}
       };
 
       /*!
@@ -263,9 +258,10 @@ namespace LibSL  {
       protected:
 
         // specialized classes will define the behaviour of the constructor from raw pointer
-        Pointer(const t_RawPointer& raw) : t_Transfer(raw)
+        Pointer(const t_RawPointer& raw) : t_Transfer()
         {
           m_RawPointer = raw;
+          t_Transfer::initFrom(&m_RawPointer);
         }
 
       public:
@@ -317,8 +313,8 @@ namespace LibSL  {
         t_Reference  operator*()         { P_Check::checkValid(m_RawPointer); return (*m_RawPointer); }
         t_Reference  operator*()   const { P_Check::checkValid(m_RawPointer); return (*m_RawPointer); }
 
-        t_Reference  operator<(const Pointer& ptr)  const { return m_RawPointer < ptr.m_RawPointer; }
-        t_Reference  operator==(const Pointer& ptr) const { return m_RawPointer == ptr.m_RawPointer; }
+        bool         operator<(const Pointer& ptr)  const { return m_RawPointer < ptr.m_RawPointer; }
+        bool         operator==(const Pointer& ptr) const { return m_RawPointer == ptr.m_RawPointer; }
 
         // operator t_RawPointer()            { return (m_RawPointer); }
         // operator T_Type * const ()   const { return (m_RawPointer); }
@@ -390,7 +386,7 @@ namespace LibSL  {
         void erase() { if (!Pointer::isNull()) { delete (Pointer::raw()); (*this) = NULL; } }
 
         operator typename Pointer::t_RawPointer() { return (raw()); }
-        operator T_Type * const () const          { return (raw()); }
+        operator T_Type * const ()   const { return (raw()); }
       };
 
 #else // g++
