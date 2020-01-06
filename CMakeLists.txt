@@ -39,6 +39,8 @@ SET(LIBSL_SMALL_CORE
 	src/LibSL/Mesh/Mesh.h
 	src/LibSL/Mesh/MeshFormat_stl.cpp
 	src/LibSL/Mesh/MeshFormat_stl.h
+	src/LibSL/Mesh/MeshFormat_off.cpp
+	src/LibSL/Mesh/MeshFormat_off.h
 	src/LibSL/Mesh/VertexFormat.h
 	src/LibSL/Mesh/VertexFormat_base.h
 	src/LibSL/Mesh/VertexFormat_descriptor.h

@@ -75,6 +75,7 @@ knowledge of the CeCILL-C license and that you accept its terms.
 #include <LibSL/Geometry/AAB.h>
 #include <LibSL/Mesh/Mesh.h>
 #include <LibSL/Mesh/MeshFormat_stl.h>
+#include <LibSL/Mesh/MeshFormat_off.h>
 
 #include <LibSL/Image/Image.h>
 #include <LibSL/Image/Filter.h>
@@ -99,6 +100,7 @@ using namespace LibSL::Filter;
 
 #define LIBSL_WIN32_FIX                \
 LibSL::Image::ImageFormat_TGA   s_TGA; \
+LibSL::Mesh::MeshFormat_off     s_Off; \
 LibSL::Mesh::MeshFormat_stl     s_Stl;
 
 #define LIBSL_STATIC_FIX LIBSL_WIN32_FIX
