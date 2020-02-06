@@ -53,6 +53,8 @@ SET(LIBSL_SMALL_CORE
     src/LibSL/System/System.cpp
 	src/LibSL/System/System.h
 	src/LibSL/System/Types.h
+	src/LibSL/DataStructures/Graph.h
+	src/LibSL/DataStructures/GraphAlgorithms.h
 	)
 
 IF(NOT WIN32)
