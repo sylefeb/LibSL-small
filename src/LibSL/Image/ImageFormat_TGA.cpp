@@ -124,15 +124,15 @@ void NAMESPACE::ImageFormat_TGA::save(const char *name,const NAMESPACE::Image *i
     uchar colormap_type;      /* 1 if has a colormap */
     uchar image_type;         /* compression type */
 
-    short	cm_first_entry;       /* colormap origin */
-    short	cm_length;            /* colormap length */
+    short	cm_first_entry;     /* colormap origin */
+    short	cm_length;          /* colormap length */
     uchar cm_size;            /* colormap size */
 
-    short	x_origin;             /* bottom left x coord origin */
-    short	y_origin;             /* bottom left y coord origin */
+    short	x_origin;           /* bottom left x coord origin */
+    short	y_origin;           /* bottom left y coord origin */
 
-    short	width;                /* picture width (in pixels) */
-    short	height;               /* picture height (in pixels) */
+    short	width;              /* picture width (in pixels) */
+    short	height;             /* picture height (in pixels) */
 
     uchar pixel_depth;        /* bits per pixel: 8, 16, 24 or 32 */
     uchar image_descriptor;   /* 24 bits = 0x00; 32 bits = 0x80 */
@@ -151,6 +151,7 @@ void NAMESPACE::ImageFormat_TGA::save(const char *name,const NAMESPACE::Image *i
     throw Fatal("ImageFormat_TGA::save - Sorry, cannot open file '%s'",name);
   }
   struct tga_header_t h;
+  memset(&h, 0x00, sizeof(h));
   h.id_lenght        = 0;
   h.colormap_type    = 0;
   if (lum) {
@@ -172,12 +173,13 @@ void NAMESPACE::ImageFormat_TGA::save(const char *name,const NAMESPACE::Image *i
   if (lum) {
     fwrite(data,img->w()*img->h(),1,f);
   } else {
+    sl_assert(img->numComp() >= 3);
     ForImage(img,i,j) {
       ForIndex(c,3) { 
-        fwrite(data + ((i + j* img->w()) * img->numComp() + (2-c)) ,1,1,f); // BGR ...
+        fwrite(data + ((i + j * img->w()) * img->numComp() + (2 - c)), 1, 1, f); // BGR ...
       }
       if (img->numComp() == 4) {
-        fwrite(data + ((i + j* img->w()) * img->numComp() + 3) ,1,1,f); // alpha
+        fwrite(data + ((i + j * img->w()) * img->numComp() + 3), 1, 1, f); // alpha
       }
     }
   }
