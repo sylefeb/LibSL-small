@@ -175,12 +175,13 @@ void NAMESPACE::ImageFormat_TGA::save(const char *name,const NAMESPACE::Image *i
   if (lum) {
     fwrite(data,img->w()*img->h(),1,f);
   } else {
+    sl_assert(img->numComp() >= 3);
     ForImage(img,i,j) {
       ForIndex(c,3) { 
-        fwrite(data + ((i + j* img->w()) * img->numComp() + (2-c)) ,1,1,f); // BGR ...
+        fwrite(data + ((i + j * img->w()) * img->numComp() + (2 - c)), 1, 1, f); // BGR ...
       }
       if (img->numComp() == 4) {
-        fwrite(data + ((i + j* img->w()) * img->numComp() + 3) ,1,1,f); // alpha
+        fwrite(data + ((i + j * img->w()) * img->numComp() + 3), 1, 1, f); // alpha
       }
     }
   }
