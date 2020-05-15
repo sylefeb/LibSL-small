@@ -149,7 +149,6 @@ namespace LibSL {
       std::ostream& bold(std::ostream& s);
       std::ostream& black(std::ostream& s);
       std::ostream& red(std::ostream& s);
-      std::ostream& bright_red(std::ostream& s);
       std::ostream& green(std::ostream& s);
       std::ostream& yellow(std::ostream& s);
       std::ostream& blue(std::ostream& s);

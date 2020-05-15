@@ -524,17 +524,6 @@ std::ostream& NAMESPACE::Console::red(std::ostream& s)
   return (s);
 }
 
-std::ostream& NAMESPACE::Console::bright_red(std::ostream& s)
-{
-#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
-  SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_RED | FOREGROUND_INTENSITY);
-#else
-  setupConsole();
-  s << char(27) << "[39m";
-#endif
-  return (s);
-}
-
 std::ostream& NAMESPACE::Console::green(std::ostream& s)
 {
 #if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
