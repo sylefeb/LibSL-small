@@ -114,31 +114,33 @@ NAMESPACE::Image *NAMESPACE::ImageFormat_TGA::load(const char *name) const
 
 //---------------------------------------------------------------------------
 
-void NAMESPACE::ImageFormat_TGA::save(const char *name,const NAMESPACE::Image *img) const
-{
 #pragma pack(push, 1)
-  /* TGA header */
-  struct tga_header_t
-  {
-    uchar id_lenght;          /* size of image id */
-    uchar colormap_type;      /* 1 if has a colormap */
-    uchar image_type;         /* compression type */
+/* TGA header */
+struct tga_header_t
+{
+  uchar id_length;
+  uchar colormap_type;
+  uchar image_type;
 
-    short	cm_first_entry;       /* colormap origin */
-    short	cm_length;            /* colormap length */
-    uchar cm_size;            /* colormap size */
+  short	cm_first_entry;
+  short	cm_length;
+  uchar cm_depth;
 
-    short	x_origin;             /* bottom left x coord origin */
-    short	y_origin;             /* bottom left y coord origin */
+  short	x_origin;
+  short	y_origin;
 
-    short	width;                /* picture width (in pixels) */
-    short	height;               /* picture height (in pixels) */
+  short	width;
+  short	height;
 
-    uchar pixel_depth;        /* bits per pixel: 8, 16, 24 or 32 */
-    uchar image_descriptor;   /* 24 bits = 0x00; 32 bits = 0x80 */
-  };
+  uchar pixel_depth;
+  uchar image_descriptor;
+};
 #pragma pack(pop)
 
+//---------------------------------------------------------------------------
+
+void NAMESPACE::ImageFormat_TGA::save(const char *name,const NAMESPACE::Image *img) const
+{
   const ImageRGBA *rgba = dynamic_cast<const ImageRGBA *>(img);
   const ImageRGB  *rgb  = dynamic_cast<const ImageRGB  *>(img);
   const ImageL8   *lum  = dynamic_cast<const ImageL8   *>(img);
@@ -151,7 +153,8 @@ void NAMESPACE::ImageFormat_TGA::save(const char *name,const NAMESPACE::Image *i
     throw Fatal("ImageFormat_TGA::save - Sorry, cannot open file '%s'",name);
   }
   struct tga_header_t h;
-  h.id_lenght        = 0;
+  memset(&h,0x00,sizeof(h));
+  h.id_length        = 0;
   h.colormap_type    = 0;
   if (lum) {
     h.image_type     = 3;
@@ -160,7 +163,7 @@ void NAMESPACE::ImageFormat_TGA::save(const char *name,const NAMESPACE::Image *i
   }
   h.cm_first_entry   = 0;
   h.cm_length        = 0;
-  h.cm_size          = 0;
+  h.cm_depth         = 0;
   h.x_origin         = 0;
   h.y_origin         = 0;
   h.width            = img->w();
@@ -172,12 +175,13 @@ void NAMESPACE::ImageFormat_TGA::save(const char *name,const NAMESPACE::Image *i
   if (lum) {
     fwrite(data,img->w()*img->h(),1,f);
   } else {
+    sl_assert(img->numComp() >= 3);
     ForImage(img,i,j) {
       ForIndex(c,3) { 
-        fwrite(data + ((i + j* img->w()) * img->numComp() + (2-c)) ,1,1,f); // BGR ...
+        fwrite(data + ((i + j * img->w()) * img->numComp() + (2 - c)), 1, 1, f); // BGR ...
       }
       if (img->numComp() == 4) {
-        fwrite(data + ((i + j* img->w()) * img->numComp() + 3) ,1,1,f); // alpha
+        fwrite(data + ((i + j * img->w()) * img->numComp() + 3), 1, 1, f); // alpha
       }
     }
   }

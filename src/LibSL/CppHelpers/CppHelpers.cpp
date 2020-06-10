@@ -56,6 +56,10 @@ using namespace LibSL::System::Time;
 
 // ------------------------------------------------------
 
+#define ESCAPE_SEQUENCES_ONLY
+
+// ------------------------------------------------------
+
 #define TEMP_STR_SIZE 4096
 
 #ifdef _DEBUG
@@ -88,9 +92,15 @@ const char *NAMESPACE::sprint(const char *msg,...)
 
 // ------------------------------------------------------
 
+void setupConsole();
+
+// ------------------------------------------------------
+
 #if defined(_WIN32) || defined(_WIN64) // TODO: the following must be moved in System/Platform
 
 #include <windows.h>
+
+// ------------------------------------------------------
 
 const char    *NAMESPACE::toChar(const wchar_t *wstr)
 {
@@ -204,7 +214,7 @@ void NAMESPACE::Console::progressTextInit(uint max)
   s_ProgressTextPercentLast = 0;
   s_ProgressTextTimeLast    = System::Time::milliseconds();
   s_ProgressTextTimeStart   = System::Time::milliseconds();
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   GetConsoleScreenBufferInfo(GetStdHandle(STD_ERROR_HANDLE), &s_ProgressTextCursorNfo);
 #else
   std::cout << char(27) << "[s" << std::flush;;
@@ -228,7 +238,7 @@ void NAMESPACE::Console::progressTextUpdate(uint cur)
     uint m  = ((tm/(1000*60)) % 60);
     uint s  = ((tm/1000)      % 60);
     uint ms = tm % 1000;
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
     SetConsoleCursorPosition(GetStdHandle(STD_ERROR_HANDLE), s_ProgressTextCursorNfo.dwCursorPosition);
     std::cerr << sprint("%.2f%%\t (", percent);
     SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_GREEN | FOREGROUND_INTENSITY);
@@ -236,6 +246,7 @@ void NAMESPACE::Console::progressTextUpdate(uint cur)
     SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), s_ProgressTextCursorNfo.wAttributes);
     std::cerr << sprint(" left)");
 #else
+    setupConsole();
     std::cout << char(27) << "[u";
     std::cout << char(27) << "[K";
     std::cout << char(27) << "[s";
@@ -261,7 +272,7 @@ void NAMESPACE::Console::progressTextEnd()
   uint m  = ((tm/(1000*60)) % 60);
   uint s  = ((tm/1000)      % 60);
   uint ms = tm % 1000;
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   SetConsoleCursorPosition(GetStdHandle(STD_ERROR_HANDLE), s_ProgressTextCursorNfo.dwCursorPosition);
   std::cerr << sprint("done in ");
   SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
@@ -270,6 +281,7 @@ void NAMESPACE::Console::progressTextEnd()
   //std::cerr << sprint(".                     \n");
   std::cerr << sprint(".                     ");
 #else
+  setupConsole();
   std::cout << char(27) << "[u";
   std::cout << char(27) << "[K";
   std::cout << sprint("done in\t %c[36m%02d:%02d:%02d%c[37m.\n", 27, h, m, s, 27) << std::flush;;
@@ -283,6 +295,29 @@ void NAMESPACE::Console::progressTextEnd()
 #if defined(_WIN32) || defined(_WIN64)
 
 std::stack<CONSOLE_SCREEN_BUFFER_INFO> s_CursorNfoStack;
+
+void setupConsole()
+{
+  static bool done = false;
+  if (done) {
+    return;
+  }
+  {
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+  }
+  {
+    HANDLE hOut = GetStdHandle(STD_ERROR_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+  }
+  done = true;
+}
 
 void NAMESPACE::Console::pushCursor()
 {
@@ -323,6 +358,10 @@ void NAMESPACE::Console::cursorGotoPreviousLineStart()
 }
 
 #else
+
+void setupConsole()
+{
+}
 
 void NAMESPACE::Console::pushCursor()
 {
@@ -371,9 +410,10 @@ void NAMESPACE::Console::processingUpdate()
   if (elapsed > 100) {
     s_Processing ++;
     s_ProcessingTmLast = tm;
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
     SetConsoleCursorPosition(GetStdHandle(STD_ERROR_HANDLE), s_ProcessingCursorNfo.dwCursorPosition);
 #else
+    setupConsole();
     std::cerr << char(27) << "[1D";
 #endif
     std::cerr << seq[s_Processing&3];
@@ -384,9 +424,10 @@ void NAMESPACE::Console::processingUpdate()
 
 void NAMESPACE::Console::processingEnd()
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   SetConsoleCursorPosition(GetStdHandle(STD_ERROR_HANDLE), s_ProcessingCursorNfo.dwCursorPosition);
 #else
+  setupConsole();
   std::cerr << char(27) << "[1D";
 #endif
 }
@@ -395,7 +436,7 @@ void NAMESPACE::Console::processingEnd()
 
 void NAMESPACE::Console::clear()
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   CONSOLE_SCREEN_BUFFER_INFO csbi;
   COORD coordScreen = { 0, 0 };
   DWORD cCharsWritten;
@@ -409,6 +450,7 @@ void NAMESPACE::Console::clear()
   FillConsoleOutputAttribute(hConsole, csbi.wAttributes, dwConSize, coordScreen, &cCharsWritten);
   SetConsoleCursorPosition(hConsole, coordScreen);
 #else
+  setupConsole();
   std::cerr << char(27) << "[2J";
 #endif
 }
@@ -440,9 +482,10 @@ std::ostream& NAMESPACE::operator << (std::ostream& s, const printByteSize& pbs)
 
 std::ostream& NAMESPACE::Console::normal(std::ostream& s)
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 #else
+  setupConsole();
   s << char(27) << "[0m";
 #endif
   return (s);
@@ -450,9 +493,10 @@ std::ostream& NAMESPACE::Console::normal(std::ostream& s)
 
 std::ostream& NAMESPACE::Console::bold(std::ostream& s)
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 #else
+  setupConsole();
   s << char(27) << "[1m";
 #endif
   return (s);
@@ -460,9 +504,10 @@ std::ostream& NAMESPACE::Console::bold(std::ostream& s)
 
 std::ostream& NAMESPACE::Console::black(std::ostream& s)
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_INTENSITY);
 #else
+  setupConsole();
   s << char(27) << "[30m";
 #endif
   return (s);
@@ -470,9 +515,10 @@ std::ostream& NAMESPACE::Console::black(std::ostream& s)
 
 std::ostream& NAMESPACE::Console::red(std::ostream& s)
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_RED | FOREGROUND_INTENSITY);
 #else
+  setupConsole();
   s << char(27) << "[31m";
 #endif
   return (s);
@@ -480,9 +526,10 @@ std::ostream& NAMESPACE::Console::red(std::ostream& s)
 
 std::ostream& NAMESPACE::Console::green(std::ostream& s)
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 #else
+  setupConsole();
   s << char(27) << "[32m";
 #endif
   return (s);
@@ -490,9 +537,10 @@ std::ostream& NAMESPACE::Console::green(std::ostream& s)
 
 std::ostream& NAMESPACE::Console::yellow(std::ostream& s)
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 #else
+  setupConsole();
   s << char(27) << "[33m";
 #endif
   return (s);
@@ -500,9 +548,10 @@ std::ostream& NAMESPACE::Console::yellow(std::ostream& s)
 
 std::ostream& NAMESPACE::Console::blue(std::ostream& s)
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 #else
+  setupConsole();
   s << char(27) << "[34m";
 #endif
   return (s);
@@ -510,9 +559,10 @@ std::ostream& NAMESPACE::Console::blue(std::ostream& s)
 
 std::ostream& NAMESPACE::Console::magenta(std::ostream& s)
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 #else
+  setupConsole();
   s << char(27) << "[35m";
 #endif
   return (s);
@@ -520,9 +570,10 @@ std::ostream& NAMESPACE::Console::magenta(std::ostream& s)
 
 std::ostream& NAMESPACE::Console::cyan(std::ostream& s)
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 #else
+  setupConsole();
   s << char(27) << "[36m";
 #endif
   return (s);
@@ -530,9 +581,10 @@ std::ostream& NAMESPACE::Console::cyan(std::ostream& s)
 
 std::ostream& NAMESPACE::Console::white(std::ostream& s)
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 #else
+  setupConsole();
   s << char(27) << "[37m";
 #endif
   return (s);
@@ -540,9 +592,10 @@ std::ostream& NAMESPACE::Console::white(std::ostream& s)
 
 std::ostream& NAMESPACE::Console::gray(std::ostream& s)
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(ESCAPE_SEQUENCES_ONLY)
   SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 #else
+  setupConsole();
   s << char(27) << "[37m";
 #endif
   return (s);
