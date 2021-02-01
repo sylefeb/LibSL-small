@@ -85,6 +85,8 @@ namespace LibSL {
       std::string& strokeColor() { return m_StrokeColor; }
       float&       strokeWidth() { return m_StrokeWidth; }
       std::string& fillColor()   { return m_FillColor; }
+
+      std::ofstream &file() { return m_File; }
     };
 
   } //namespace LibSL::SvgHelpers
