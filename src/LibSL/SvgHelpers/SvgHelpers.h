@@ -61,7 +61,9 @@ namespace LibSL {
       std::string   m_StrokeColor;
       float         m_StrokeWidth;
       std::string   m_FillColor;
+      int           m_NumFracDigits = 3;
       LibSL::Math::m4x4f m_Trsf;
+      std::ostream &ff(std::ostream &os,float d);
     public:
       Svg(const std::string &fname,         
         LibSL::Geometry::AAB<2> viewbox = LibSL::Geometry::AAB<2>(),
@@ -69,6 +71,8 @@ namespace LibSL {
       ~Svg();
 
 			void setProperties(std::string strokeColor, std::string fillColor, float strokeWidth);
+
+      void setPrecision(int num_frac_digits) { m_NumFracDigits = num_frac_digits; }
 
       void startPath();
       void endPath(bool open=false);

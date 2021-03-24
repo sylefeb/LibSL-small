@@ -52,6 +52,7 @@ using namespace LibSL::Math;
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -79,16 +80,31 @@ NAMESPACE::Svg::Svg(
    baseProfile=\"full\"\n\
    version=\"1.1\"\n";
    if (!viewbox.empty()) {
-     m_File << "viewBox=\""
-       << viewbox.minCorner()[0] << " "
-       << viewbox.minCorner()[1] << " "
-       << viewbox.extent()[0] << " "
-       << viewbox.extent()[1]
-       << "\"";
+     m_File << "viewBox=\"";
+     ff(m_File, viewbox.minCorner()[0]) << " ";
+     ff(m_File, viewbox.minCorner()[1]) << " ";
+     ff(m_File, viewbox.extent()[0]) << " ";
+     ff(m_File, viewbox.extent()[1]) << "\"";
    }
   m_File << ">\n\
   <g id=\"layer1\">\n\
     ";
+}
+
+// ------------------------------------------------------
+
+std::ostream& NAMESPACE::Svg::ff(std::ostream &os,float d)
+{ 
+  double fractpart; double intpart;
+  fractpart = modf((double)d, &intpart);
+  if (d < 0.0) {
+    os << '-';
+  }
+  os << abs((int)intpart);
+  os << '.';
+  os << std::setfill('0') << std::setw(m_NumFracDigits) << (int)(fabs(fractpart) * pow(10.0, (double)m_NumFracDigits));
+  os << std::setfill(' ');
+  return os;
 }
 
 // ------------------------------------------------------
@@ -114,7 +130,8 @@ void NAMESPACE::Svg::startPath()
 void NAMESPACE::Svg::addPoint(float x,float y)
 {
   v3f t = m_Trsf.mulPoint(v3f(x, y, 0.0f));
-  m_File << t[0] << ',' << t[1] << ' ';
+  ff(m_File, t[0]) << ',';
+  ff(m_File, t[1]) << ' ';
 }
 
 // ------------------------------------------------------
@@ -163,20 +180,18 @@ void NAMESPACE::Svg::addCircle(float x, float y,float r)
 {
   v3f t = m_Trsf.mulPoint(v3f(x, y, 0.0f));
   m_File << "<circle \
-    style=\"fill:"<<m_FillColor<<";fill-rule:evenodd;stroke:"<<m_StrokeColor<<";stroke-width:"<<m_StrokeWidth<<"px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\"\n\
-    cx=\"" << t[0] << "\"\n\
-    cy=\"" << t[1] << "\"\n\
-    r=\"" << r << "\" />\n";
+    style=\"fill:" << m_FillColor << ";fill-rule:evenodd;stroke:" << m_StrokeColor << ";stroke-width:" << m_StrokeWidth << "px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\"\n cx=\""; 
+  ff(m_File, t[0]) << "\"\n cy=\"";
+  ff(m_File, t[1]) << "\"\n r=\"" << r << "\" />\n";
 }
 
 void NAMESPACE::Svg::addText(float x, float y, const char *txt)
 {
   v3f t = m_Trsf.mulPoint(v3f(x, y, 0.0f));
   m_File << "<text \
-    style=\"fill:"<<m_FillColor<<";\"\n\
-    x=\"" << t[0] << "\"\n\
-    y=\"" << t[1] << "\"\n\
-        >" << txt << "</text>";
+    style=\"fill:" << m_FillColor << ";\"\n x=\"";
+  ff(m_File, t[0]) << "\"\n y=\"";
+  ff(m_File, t[1]) << "\"\n >" << txt << "</text>";
 }
 
 // ------------------------------------------------------
