@@ -80,7 +80,12 @@ void NAMESPACE::File::__fopen_s(FILE **pf,const char *path, const char *mode)
 bool NAMESPACE::File::exists(const char *fname)
 {
 #if defined(_WIN32) || defined(_WIN64)
-  return (PathFileExistsA(fname) != 0);
+# if defined(NO_SHLWAPI)
+    sl_assert(false);
+    return true;
+# else
+    return (PathFileExistsA(fname) != 0);
+# endif
 #else
   FILE *f = NULL;
   f = fopen(fname,"rb");
