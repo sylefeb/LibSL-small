@@ -101,7 +101,7 @@ using namespace LibSL::Filter;
 #define LIBSL_WIN32_FIX                \
 LibSL::Image::ImageFormat_TGA   s_TGA; \
 LibSL::Mesh::MeshFormat_off     s_Off; \
-LibSL::Mesh::MeshFormat_off     s_Ply; \
+LibSL::Mesh::MeshFormat_ply     s_Ply; \
 LibSL::Mesh::MeshFormat_stl     s_Stl;
 
 #define LIBSL_STATIC_FIX LIBSL_WIN32_FIX
