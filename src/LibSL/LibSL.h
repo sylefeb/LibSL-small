@@ -76,6 +76,7 @@ knowledge of the CeCILL-C license and that you accept its terms.
 #include <LibSL/Mesh/Mesh.h>
 #include <LibSL/Mesh/MeshFormat_stl.h>
 #include <LibSL/Mesh/MeshFormat_off.h>
+#include <LibSL/Mesh/MeshFormat_ply.h>
 
 #include <LibSL/Image/Image.h>
 #include <LibSL/Image/Filter.h>
