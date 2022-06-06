@@ -182,13 +182,12 @@ namespace LibSL {
       bool             m_EOLAsSpace;
       T_Stream&        m_Stream;
 	  
-	  static const int StringBufferSize = 1024;
-	  LibSL::Memory::Array::Array<char> m_StringBuffer;
+	  std::vector<char> m_StringBuffer;
 
     public:
 
       Parser(T_Stream& stream,bool eol_as_space = true)
-        : m_Stream(stream), m_StringBuffer(StringBufferSize)
+        : m_Stream(stream)
       {
         m_EOLAsSpace = eol_as_space;
       }
@@ -259,47 +258,47 @@ namespace LibSL {
       char *readString(const char *eos = NULL, const char *accepted = NULL)
       {
         int bufpos = 0;
-        m_StringBuffer[bufpos] = '\0';
+        m_StringBuffer.clear();
         int         c;
         if (!skipSpaces()) {
-          return (m_StringBuffer.raw());
+          m_StringBuffer.push_back('\0');
+          return &(m_StringBuffer[0]);
         }
         do {
-          sl_assert(bufpos < StringBufferSize);
           c = m_Stream.getc();
           // end here ?
           if (m_Stream.eof()) {
             // yes: eof
-            m_StringBuffer[bufpos++] = '\0';
-            return (m_StringBuffer.raw());
+            m_StringBuffer.push_back('\0');
+            return &(m_StringBuffer[0]);
           } else {
             if (eos == NULL) {
               if (accepted == NULL) {
                 // yes: space
                 if (IS_SPACE(c) || IS_EOL(c)) {
                   m_Stream.ungetc(c);
-                  m_StringBuffer[bufpos++] = '\0';
-                  return (m_StringBuffer.raw());
+                  m_StringBuffer.push_back('\0');
+                  return &(m_StringBuffer[0]);
                 }
               } else {
                 if (strchr(accepted, c) == NULL) {
                   // not one of the accepted char
                   m_Stream.ungetc(c);
-                  m_StringBuffer[bufpos++] = '\0';
-                  return (m_StringBuffer.raw());
+                  m_StringBuffer.push_back('\0');
+                  return &(m_StringBuffer[0]);
                 }
               }
             } else {
               // yes: user given stopper
               if (strchr(eos,c) != NULL) {
                 m_Stream.ungetc(c);
-                m_StringBuffer[bufpos++] = '\0';
-                return (m_StringBuffer.raw());
+                m_StringBuffer.push_back('\0');
+                return &(m_StringBuffer[0]);
               }
             }
           }
           // no: append
-          m_StringBuffer[bufpos++] = c;
+          m_StringBuffer.push_back(c);
         } while ( ! m_Stream.eof() );
         sl_assert(false); 
         return (NULL);
@@ -308,26 +307,25 @@ namespace LibSL {
       char *readUntil(const char *eos)
       {
         int bufpos = 0;
-        m_StringBuffer[bufpos] = '\0';
+        m_StringBuffer.clear();
         int         c;
         do {
-          sl_assert(bufpos < StringBufferSize);
           c = m_Stream.getc();
           // end here ?
           if (m_Stream.eof()) {
             // yes: eof
-            m_StringBuffer[bufpos++] = '\0';
-            return (m_StringBuffer.raw());
+            m_StringBuffer.push_back('\0');
+            return &(m_StringBuffer[0]);
           } else {
             // yes: user given stopper
             if (strchr(eos,c) != NULL) {
               m_Stream.ungetc(c);
-              m_StringBuffer[bufpos++] = '\0';
-              return (m_StringBuffer.raw());
+              m_StringBuffer.push_back('\0');
+              return &(m_StringBuffer[0]);
             }
           }
           // no: append
-          m_StringBuffer[bufpos++] = c;
+          m_StringBuffer.push_back(c);
         } while ( ! m_Stream.eof() );
         sl_assert(false); 
         return (NULL);
